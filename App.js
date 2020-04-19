@@ -17,9 +17,11 @@ const { height, width } = Dimensions.get("window")
 export default class App extends React.Component {
   state = {
     newToDo: ""
-  }
+  };
+
   render() {
     const { newToDo } = this.state;
+
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
@@ -28,21 +30,21 @@ export default class App extends React.Component {
           <TextInput
             style={styles.input}
             placeholder={"New TO DO"}
-            // value={newToDo}
-            onChangeTex={this._controlNewToDo}
+            value={newToDo}
+            onChangeText={this._controlNewToDo}
             placeholderTextColor={"#999"}
             returnKeyType={"done"}
             autoCorrect={false}
           />
-          <ScrollView>
-            <ToDo />
-            <Text>dewer</Text>
+          <ScrollView contentContainerStyle={styles.toDos}>
+            <ToDo text={"Hi there"} />
           </ScrollView>
         </View>
       </View>
     );
   }
-  _controlNewToDo = text => {
+  
+  _controlNewToDo = (text) => {
     this.setState({
       newToDo: text
     });
@@ -90,5 +92,8 @@ const styles = StyleSheet.create({
     borderBottomColor: "#bbb",
     borderBottomWidth: 1,
     fontSize: 25
+  },
+  toDos: {
+    alignItems: "center"
   }
 });
