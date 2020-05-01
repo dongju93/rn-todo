@@ -9,18 +9,30 @@ import {
   Platform,
   ScrollView
 } from 'react-native';
+import { AppLoading } from "expo"
 import ToDo from "./todo";
+import 'react-native-get-random-values';
+import {v1 as uuidv1} from "uuid";
 
 // 휴대폰의 화면 크기를 구하는 정의
 const { height, width } = Dimensions.get("window")
 
 export default class App extends React.Component {
   state = {
-    newToDo: ""
+    newToDo: "",
+    loadedToDos: false,
+    toDos: {}
+  };
+  componentDidMount = () => {
+    this._loadToDos();
   };
 
   render() {
-    const { newToDo } = this.state;
+    const { newToDo, loadedToDos, toDos } = this.state;
+    console.log(toDos)
+    if (!loadedToDos) {
+      return <AppLoading />;
+    }
 
     return (
       <View style={styles.container}>
@@ -35,6 +47,7 @@ export default class App extends React.Component {
             placeholderTextColor={"#999"}
             returnKeyType={"done"}
             autoCorrect={false}
+            onSubmitEditing={this._addToDos}
           />
           <ScrollView contentContainerStyle={styles.toDos}>
             <ToDo text={"Hi there"} />
@@ -44,10 +57,40 @@ export default class App extends React.Component {
     );
   }
   
-  _controlNewToDo = (text) => {
+  _controlNewToDo = text => {
     this.setState({
       newToDo: text
     });
+  };
+  _loadToDos = () => {
+    this.setState({
+      loadedToDos: true
+    })
+  };
+  _addToDos = () => {
+    const { newToDo } = this.state;
+    if (newToDo !== "") {
+      this.setState(prevState => {
+        const ID = uuidv1();
+        const newToDoObject = {
+          [ID]: {
+            id: ID,
+            isCompleted: false,
+            text: newToDo,
+            createdAt: Date.now()
+          }
+        };
+        const newState = {
+          ...prevState,
+          newToDo: "",
+          toDos: {
+            ...prevState.toDos,
+            ...newToDoObject
+          }
+        }
+        return { ...newState };
+      });
+    }
   };
 }
 
